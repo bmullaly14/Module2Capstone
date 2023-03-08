@@ -6,7 +6,7 @@ using TenmoServer.Models;
 
 namespace TenmoServer.Controllers
 {
-    [Route("[controller")]
+    [Route("[controller]")]
     [ApiController]
     public class AccountController : Controller
     {
@@ -14,10 +14,7 @@ namespace TenmoServer.Controllers
         private IAccountDao accountDao;
 
         public AccountController(IUserDao userDao, IAccountDao accountDao) { }
-        public IActionResult Index()
-        {
-            return View();
-        }
+
         [Authorize(Roles = "user")] // we want to authorize this to only showing balance for userId when user IDs match. not sure if "user" is correct
         [HttpGet("{id}")]
         public ActionResult<Account> GetAccount(int id)

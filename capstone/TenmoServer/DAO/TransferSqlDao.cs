@@ -101,7 +101,14 @@ namespace TenmoServer.DAO
             return transfers;
         }
 
+<<<<<<< HEAD
         public Transfer ExecuteTransfer();//actually add/remove money from two accounts.  
+=======
+        public Transfer ExecuteTransfer() {
+            //TODO fill this out 
+            return null;
+        }
+>>>>>>> 29cc4b0bae576b4e4bae33220005afbc45bfaefd
 
 
 
