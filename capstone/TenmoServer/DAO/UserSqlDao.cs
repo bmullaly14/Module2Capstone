@@ -17,7 +17,7 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
-        public User GetUser(string username)
+        public User GetUser(int userId)
         {
             User returnUser = null;
 
@@ -27,8 +27,8 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT user_id, username, password_hash, salt FROM tenmo_user WHERE username = @username", conn);
-                    cmd.Parameters.AddWithValue("@username", username);
+                    SqlCommand cmd = new SqlCommand("SELECT user_id, username, password_hash, salt FROM tenmo_user WHERE user_id = @ID", conn);
+                    cmd.Parameters.AddWithValue("@ID", userId);
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())

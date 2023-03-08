@@ -8,6 +8,7 @@
         public decimal Balance { get; set; } = 1000;
 
         //CONSTRUCTORS
+        public Account() { } // NEED a blank constructor for deserialization! :)
         public Account(int userId)
         {
             UserId = userId;
