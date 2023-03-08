@@ -80,9 +80,9 @@ namespace TenmoServer.DAO
                                                     JOIN account ON account.account_id = transfer.account_from 
                                                     JOIN tenmo_user ON account.user_id=tenmo_user.user_id 
                                                     WHERE 
-                                                    (SELECT account_id FROM account WHERE tenmo_user.@user_id = account.user_id) = transfer.account_from 
+                                                    (SELECT account_id FROM account WHERE @user_id = account.user_id) = transfer.account_from 
                                                     OR 
-                                                    (SELECT account_id FROM account WHERE tenmo_user.@user_id = account.user_id) = transfer.account_to;", conn);//I dont know if this makes sense???
+                                                    (SELECT account_id FROM account WHERE @user_id = account.user_id) = transfer.account_to;", conn);//I dont know if this makes sense???
 
                     cmd.Parameters.AddWithValue("@user_id", userId);
 
@@ -101,7 +101,7 @@ namespace TenmoServer.DAO
             return transfers;
         }
 
-        public Transfer ExecuteTransfer();
+        public Transfer ExecuteTransfer();//actually add/remove money from two accounts.  
 
 
 
