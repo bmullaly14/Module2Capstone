@@ -69,34 +69,34 @@ namespace TenmoServer.DAO
         }
 
 
-
-        public Account AddAccountToUser(int userId)//will need to add an account anytime a user is created.  Maybe add an if statment if user id already has an existing account?
-        {
+        //WE DON'T NEED THIS B/C -> AddUser() actually does this for us
+        //public Account AddAccountToUser(int userId)//will need to add an account anytime a user is created.  Maybe add an if statment if user id already has an existing account?
+        //{
             
-            try
-            {
-                using(SqlConnection conn = new SqlConnection(ConnectionString))
-                {
-                    conn.Open();
+        //    try
+        //    {
+        //        using(SqlConnection conn = new SqlConnection(ConnectionString))
+        //        {
+        //            conn.Open();
 
-                    SqlCommand cmd = new SqlCommand(@"INSERT INTO account (user_id,balance) 
-                                                    OUTPUT INSERTED.account_id
-                                                    VALUES(@userId,1000);", conn); //I manually made balance 1000 idk if thats neccessary or not but I did it.
-                    cmd.Parameters.AddWithValue("@userId",userId);
+        //            SqlCommand cmd = new SqlCommand(@"INSERT INTO account (user_id,balance) 
+        //                                            OUTPUT INSERTED.account_id
+        //                                            VALUES(@userId,1000);", conn); //I manually made balance 1000 idk if thats neccessary or not but I did it.
+        //            cmd.Parameters.AddWithValue("@userId",userId);
                    
-                    int newID = Convert.ToInt32(cmd.ExecuteScalar());
+        //            int newID = Convert.ToInt32(cmd.ExecuteScalar());
 
-                    Account createdAccount = GetAccountByUserId(newID);
-                    return createdAccount;
-                }
+        //            Account createdAccount = GetAccountByUserId(newID);
+        //            return createdAccount;
+        //        }
                 
-            }
-            catch 
-            {
-                throw;
-            }
+        //    }
+        //    catch 
+        //    {
+        //        throw;
+        //    }
            
-        }
+        //}
 
         public Account CreateAccountFromReader(SqlDataReader reader)
         {
