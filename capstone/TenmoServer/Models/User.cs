@@ -1,4 +1,6 @@
-﻿namespace TenmoServer.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TenmoServer.Models
 {
     public class User
     {
@@ -25,7 +27,10 @@
     /// </summary>
     public class LoginUser
     {
+        //[Required(ErrorMessage = "The 'Username' field must not be blank.")]
         public string Username { get; set; }
+       
+        //[Required(ErrorMessage = "The 'Password' field must not be blank.")]
         public string Password { get; set; }
     }
 }

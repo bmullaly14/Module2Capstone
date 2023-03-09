@@ -10,6 +10,7 @@ namespace TenmoServer.Controllers
     [ApiController]
     public class TransferController : Controller
     {
+
         private ITransferDao transferDao;
 
         public TransferController(ITransferDao transferDao)
@@ -83,5 +84,10 @@ namespace TenmoServer.Controllers
         
     }
 
-}
+        //[Authorize(Roles = "user")]
+        //[HttpPost] //create new transfer 
 
+
+
+    }
+}
