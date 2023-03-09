@@ -6,6 +6,8 @@ using TenmoClient.Models;
 
 namespace TenmoClient.Services
 {
+    //THIS CLASS WAS PRE-MADE FOR US. DON'T TOUCH!
+
     public class AuthenticatedApiService
     {
         public static IRestClient client = null;

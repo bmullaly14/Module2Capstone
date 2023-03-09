@@ -27,7 +27,7 @@ namespace TenmoServer.Controllers
             IActionResult result = BadRequest(new { message = "Username or password is incorrect" });
 
             // Get the user by username
-            User user = userDao.GetUser(userParam.Username);
+            User user = userDao.GetUserByName(userParam.Username);
 
             // If we found a user and the password hash matches
             if (user != null && passwordHasher.VerifyHashMatch(user.PasswordHash, userParam.Password, user.Salt))
@@ -50,7 +50,7 @@ namespace TenmoServer.Controllers
         {
             IActionResult result;
 
-            User existingUser = userDao.GetUser(userParam.Username);
+            User existingUser = userDao.GetUserByName(userParam.Username);
             if (existingUser != null)
             {
                 return Conflict(new { message = "Username already taken. Please choose a different username." });
