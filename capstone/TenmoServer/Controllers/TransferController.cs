@@ -6,7 +6,7 @@ using TenmoServer.Models;
 
 namespace TenmoServer.Controllers
 {
-    [Route("[controller")]
+    [Route("[controller]")]
     [ApiController]
     public class TransferController : Controller
     {
@@ -17,7 +17,9 @@ namespace TenmoServer.Controllers
             this.transferDao = transferDao;
 
         }
-        //need HttpGet(ID), HttpPost to transfer to other user, HttpPut(TransactionID) to update both account
+        //need HttpGet(ID), HttpPost to transfer to other user,
+        //HttpPut(TransactionID) to update both account -- I think we can do this with a post...
+        //The actual "doing" will happen in the DAO, so we just have to make the transfer.
 
         [HttpGet("/transfer/user/{userId}")]
         public ActionResult<IList<Transfer>> GetAllTransfersForUser(int userId)
@@ -26,13 +28,13 @@ namespace TenmoServer.Controllers
 
             transfers = (List<Transfer>)transferDao.GetTransfersByUserId(userId);
 
-            if(transfers.Count != 0)
+            if (transfers == null)
             {
-                return transfers;
+                return NoContent();
             }
             else
             {
-                return NoContent();
+                return transfers;
             }
 
         }
@@ -43,7 +45,7 @@ namespace TenmoServer.Controllers
 
             transfer = transferDao.GetTransfer(transferId);
 
-            if(transfer == null)
+            if (transfer == null)
             {
                 return NotFound();
             } else { return transfer; }
@@ -52,11 +54,24 @@ namespace TenmoServer.Controllers
         [HttpPost()]
         public ActionResult<Transfer> ExecuteSendTransfer(Transfer transfer)
         {
-            transferDao.ExecuteTransfer(transfer);
-            return new Transfer();
-        }
-        [HttpPut("{transId")]
+            Transfer newTransfer = null;
+            newTransfer = transferDao.ExecuteTransfer(transfer);
 
+            transfer = transferDao.GetTransfer(newTransfer.TransferId);
+
+            if(transfer.TransferId != 0)
+            {
+                return transfer;
+            } else if (newTransfer == null)
+            {
+                return NotFound();
+            } else
+            {
+                return StatusCode(500);
+            }
+             
+        }        
+        
     }
 
 }
