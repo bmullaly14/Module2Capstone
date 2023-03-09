@@ -16,7 +16,7 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
-        public void CreateTransfer(Transfer transfer)//adds transfer to sql database.  SHould it return a transfer? Should it take in tranfer information as parameters instead of tranfer object?
+        public Transfer CreateTransfer(Transfer transfer)//adds transfer to sql database.  SHould it return a transfer? Should it take in tranfer information as parameters instead of tranfer object?
         {
             try
             {
@@ -24,6 +24,7 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(@"INSERT INTO transfer (transfer_type_id,transfer_status_id,account_from,account_to,amount) 
+                                                    OUTPUT INSERTED.transfer_id
                                                     Values (@transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount)", conn);
                     cmd.Parameters.AddWithValue("@transfer_type_id",transfer.TransferTypeId);
                     cmd.Parameters.AddWithValue("@transfer_status_id",transfer.TransferStatusId);
@@ -31,8 +32,10 @@ namespace TenmoServer.DAO
                     cmd.Parameters.AddWithValue("@account_to",transfer.AccountTo);
                     cmd.Parameters.AddWithValue("@amount",transfer.Amount);
 
-                    cmd.ExecuteNonQuery();
+                    int newID = Convert.ToInt32(cmd.ExecuteScalar());
+                    Transfer returnTransfer = GetTransfer(newID);
 
+                    return returnTransfer;
                 }
             }
             catch(SqlException) {throw;}
@@ -101,9 +104,9 @@ namespace TenmoServer.DAO
             return transfers;
         }
 
-        public Transfer ExecuteTransfer() {
+        public bool ExecuteTransfer(Transfer transfer) {
             //TODO fill this out 
-            return null;
+            return false;
         }
 
 

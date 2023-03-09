@@ -50,24 +50,33 @@ namespace TenmoServer.Controllers
                 return NotFound();
             } else { return transfer; }
         }
-
-        [HttpPost()]
-        public ActionResult<Transfer> ExecuteSendTransfer(Transfer transfer)
+        //Create Transfer will be HttpPost, take in Transfer, put out Transfer w/ ID from SQL DB
+        [HttpPost]
+        public ActionResult<Transfer> CreateTransfer(Transfer transfer)
         {
-            Transfer newTransfer = null;
-            newTransfer = transferDao.ExecuteTransfer(transfer);
+            Transfer newTransfer = transferDao.CreateTransfer(transfer);
 
-            transfer = transferDao.GetTransfer(newTransfer.TransferId);
+            return Created($"/transfer/{newTransfer.TransferId}", newTransfer);
+        }
 
-            if(transfer.TransferId != 0)
-            {
-                return transfer;
-            } else if (newTransfer == null)
+        [HttpPut]
+        public ActionResult<Transfer> ExecuteSendTransfer(Transfer transfer) // take in a transfer FROM create transfer in DAO
+        {            
+            Transfer newTransfer = CreateTransfer(transfer).Value;
+
+            if(newTransfer.TransferId == 0)
             {
                 return NotFound();
-            } else
+            }
+
+            bool result = transferDao.ExecuteTransfer(newTransfer);            
+
+            if (!result)
             {
                 return StatusCode(500);
+            } else
+            {
+                return newTransfer;
             }
              
         }        
