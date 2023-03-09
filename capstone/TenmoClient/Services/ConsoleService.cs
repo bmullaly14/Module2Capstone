@@ -2,6 +2,8 @@
 
 namespace TenmoClient.Services
 {
+    //THIS CLASS WAS PRE-MADE FOR US. DON'T TOUCH!
+
     public class ConsoleService
     {
         /************************************************************
