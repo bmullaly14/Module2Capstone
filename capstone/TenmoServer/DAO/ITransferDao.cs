@@ -6,11 +6,13 @@ namespace TenmoServer.DAO
 {
     public interface ITransferDao
     {
-        void CreateTransfer(Transfer transfer);
+        Transfer CreateTransfer(Transfer transfer);
 
         IList<Transfer> GetTransfersByUserId(int userId);
 
         Transfer GetTransfer(int transferId);
+
+        bool ExecuteTransfer(Transfer transfer);
 
 
     }
