@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 using TenmoServer.Models;
 namespace TenmoServer.DAO
 {
@@ -13,17 +15,76 @@ namespace TenmoServer.DAO
        
         public Account GetAccountByAccountId(int accountId)
         {
-            return new Account();
+            Account account = new Account();
+            try
+            {
+                using(SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM account WHERE account_id = @id", conn);
+                    cmd.Parameters.AddWithValue("@id", accountId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        account = CreateAccountFromReader(reader);
+                    }
+                }
+                return account;
+            }
+            catch(SqlException ex)
+            {
+                Console.WriteLine(ex.Message); //CHANGE THIS LATER!!! HERE FOR NOW
+            }
+            return account;
         }
-        public IList<Account> GetAccountsByUserId(int userId)
+        public Account GetAccountByUserId(int userId)
         {
-            return new List<Account>();
+            Account account = new Account();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM account WHERE user_id = @id", conn);
+                    cmd.Parameters.AddWithValue("@id", userId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        account = CreateAccountFromReader(reader);
+                    }
+                }
+                return account;
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message); //CHANGE THIS LATER!!! HERE FOR NOW
+            }
+            return account;
         }
+
+
+
         public Account AddAccountToUser(int userId, Account account)
         {
             return new Account();
         }
 
+        public Account CreateAccountFromReader(SqlDataReader reader)
+        {
+            Account newAccount = new Account();
+
+            newAccount.UserId = Convert.ToInt32(reader["user_id"]);
+            newAccount.Balance = Convert.ToInt32(reader["balance"]);
+            newAccount.AccountId = Convert.ToInt32(reader["account_id"]);
+
+            return newAccount;
+        }
 
     }
 }
