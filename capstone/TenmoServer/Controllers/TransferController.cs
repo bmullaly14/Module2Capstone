@@ -16,7 +16,7 @@ namespace TenmoServer.Controllers
             this.transferDao = transferDao;
 
         }
-
+        //need HttpGet(ID), HttpPost to transfer to other user, HttpPut(TransactionID) to update both account
 
 
     }
