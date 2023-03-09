@@ -28,9 +28,9 @@ namespace TenmoServer.Models
     public class LoginUser
     {
         //[Required(ErrorMessage = "The 'Username' field must not be blank.")]
-        public string Username { get; set; }
-       
+        public string Username { get; set; } = "";
+
         //[Required(ErrorMessage = "The 'Password' field must not be blank.")]
-        public string Password { get; set; }
+        public string Password { get; set; } = "";
     }
 }

@@ -12,9 +12,9 @@ namespace TenmoServer.DAO
         private readonly string connectionString;
         const decimal startingBalance = 1000;
 
-        public UserSqlDao(string dbConnectionString)
+        public UserSqlDao(string connectionString)
         {
-            connectionString = dbConnectionString;
+            this.connectionString = connectionString;
         }
 
         public User GetUserById(int userId)
@@ -55,7 +55,8 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT user_id, username, password_hash, salt FROM tenmo_user", conn);
+                    SqlCommand cmd = new SqlCommand("SELECT user_id, username, password_hash, salt FROM tenmo_user WHERE username = @user", conn);
+                    cmd.Parameters.AddWithValue("@user", username);
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())
@@ -100,7 +101,7 @@ namespace TenmoServer.DAO
             return returnUsers;
         }
 
-        public User AddUser(string username, string password)
+        public User AddUser(String username = "", string password = "")
         {
             IPasswordHasher passwordHasher = new PasswordHasher();
             PasswordHash hash = passwordHasher.ComputeHash(password);
@@ -126,9 +127,9 @@ namespace TenmoServer.DAO
                     cmd.ExecuteNonQuery();
                 }
             }
-            catch (SqlException)
+            catch (SqlException ex)
             {
-                throw;
+                Console.WriteLine( ex.Message);
             }
 
             return GetUserByName(username);
