@@ -6,6 +6,6 @@ namespace TenmoServer.DAO
     {
         Account GetAccountByAccountId(int accountId);
         Account GetAccountByUserId(int userId);
-        Account AddAccountToUser(int userId, Account account);
+        Account AddAccountToUser(int userId);
     }
 }

@@ -18,7 +18,7 @@ namespace TenmoServer.DAO
 
         public Transfer CreateTransfer(Transfer transfer)//adds transfer to sql database.  SHould it return a transfer? Should it take in tranfer information as parameters instead of tranfer object?
         {
-            Transfer transfer = new Transfer();
+            
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -27,11 +27,11 @@ namespace TenmoServer.DAO
                     SqlCommand cmd = new SqlCommand(@"INSERT INTO transfer (transfer_type_id,transfer_status_id,account_from,account_to,amount) 
                                                     OUTPUT INSERTED.transfer_id
                                                     Values (@transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount)", conn);
-                    cmd.Parameters.AddWithValue("@transfer_type_id", transferTypeId);
-                    cmd.Parameters.AddWithValue("@transfer_status_id", transferStatusId);
-                    cmd.Parameters.AddWithValue("@account_from", accountFrom);
-                    cmd.Parameters.AddWithValue("@account_to", accountTo);
-                    cmd.Parameters.AddWithValue("@amount", amount);
+                    cmd.Parameters.AddWithValue("@transfer_type_id", transfer.TransferTypeId);
+                    cmd.Parameters.AddWithValue("@transfer_status_id", transfer.TransferStatusId);
+                    cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
+                    cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
+                    cmd.Parameters.AddWithValue("@amount", transfer.Amount);
 
                     int newID = Convert.ToInt32(cmd.ExecuteScalar());
                     Transfer returnTransfer = GetTransfer(newID);
@@ -65,13 +65,14 @@ namespace TenmoServer.DAO
                         transfer = CreateTransferFromReader(reader);
                     }
                 }
+                return transfer;
             }
             catch (SqlException)
             {
                 return transfer;//would return empty transfer object
             }
 
-            return transfer;
+            
         }
 
         public IList<Transfer> GetTransfersByUserId(int userId)//(should lol) return list of all transfers assosiacted with user id
@@ -85,7 +86,7 @@ namespace TenmoServer.DAO
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(@"SELECT transfer_id FROM transfer  
                                                     JOIN account ON account.account_id = transfer.account_from 
-                                                    WHERE user_id = transfer.account_from OR user_id= transfer.account_to;", conn);//I dont know if this makes sense???
+                                                    WHERE @user_id = transfer.account_from OR @user_id= transfer.account_to;", conn);//I dont know if this makes sense???
 
                     cmd.Parameters.AddWithValue("@user_id", userId);
 
@@ -97,11 +98,11 @@ namespace TenmoServer.DAO
                         transfers.Add(transfer);
                     }
                 }
-
+                return transfers;
             }
             catch (SqlException) { return null; }
 
-            return transfers;
+            
         }
 
 
