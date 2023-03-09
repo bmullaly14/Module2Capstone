@@ -16,31 +16,39 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
-        public void CreateTransfer(Transfer transfer)//adds transfer to sql database.  SHould it return a transfer? Should it take in tranfer information as parameters instead of tranfer object?
+        public Transfer CreateTransfer(int transferTypeId, int transferStatusId, int accountFrom, int accountTo, decimal amount)//adds transfer to sql database.  SHould it return a transfer? Should it take in tranfer information as parameters instead of tranfer object?
         {
+            Transfer transfer = new Transfer();
             try
             {
-                using(SqlConnection conn=new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(@"INSERT INTO transfer (transfer_type_id,transfer_status_id,account_from,account_to,amount) 
                                                     Values (@transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount)", conn);
-                    cmd.Parameters.AddWithValue("@transfer_type_id",transfer.TransferTypeId);
-                    cmd.Parameters.AddWithValue("@transfer_status_id",transfer.TransferStatusId);
-                    cmd.Parameters.AddWithValue("@account_from",transfer.AccountFrom);
-                    cmd.Parameters.AddWithValue("@account_to",transfer.AccountTo);
-                    cmd.Parameters.AddWithValue("@amount",transfer.Amount);
+                    cmd.Parameters.AddWithValue("@transfer_type_id", transferTypeId);
+                    cmd.Parameters.AddWithValue("@transfer_status_id", transferStatusId);
+                    cmd.Parameters.AddWithValue("@account_from", accountFrom);
+                    cmd.Parameters.AddWithValue("@account_to", accountTo);
+                    cmd.Parameters.AddWithValue("@amount", amount);
 
                     cmd.ExecuteNonQuery();
 
                 }
             }
-            catch(SqlException) {throw;}
+            catch (SqlException) { throw; }
+
+            transfer.TransferTypeId=transferTypeId;
+            transfer.TransferStatusId=transferStatusId;
+            transfer.AccountFrom=accountFrom;
+            transfer.AccountTo=accountTo;
+            transfer.Amount=amount;
+            return transfer;
         }
 
         public Transfer GetTransfer(int transferId)//Gets single transfer given transfer id from sql database
         {
-            Transfer transfer= null;
+            Transfer transfer = null;
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -53,16 +61,16 @@ namespace TenmoServer.DAO
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    if(reader.Read())
+                    if (reader.Read())
                     {
                         transfer = CreateTransferFromReader(reader);
                     }
                 }
             }
-            catch(SqlException) 
-            { 
+            catch (SqlException)
+            {
                 return transfer;//would return empty transfer object
-            } 
+            }
 
             return transfer;
         }
@@ -76,19 +84,15 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id FROM transfer 
+                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id FROM transfer  
                                                     JOIN account ON account.account_id = transfer.account_from 
-                                                    JOIN tenmo_user ON account.user_id=tenmo_user.user_id 
-                                                    WHERE 
-                                                    (SELECT account_id FROM account WHERE @user_id = account.user_id) = transfer.account_from 
-                                                    OR 
-                                                    (SELECT account_id FROM account WHERE @user_id = account.user_id) = transfer.account_to;", conn);//I dont know if this makes sense???
+                                                    WHERE user_id = transfer.account_from OR user_id= transfer.account_to;", conn);//I dont know if this makes sense???
 
                     cmd.Parameters.AddWithValue("@user_id", userId);
 
-                    SqlDataReader reader= cmd.ExecuteReader();
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-                    while(reader.Read())
+                    while (reader.Read())
                     {
                         Transfer transfer = CreateTransferFromReader(reader);
                         transfers.Add(transfer);
@@ -96,19 +100,45 @@ namespace TenmoServer.DAO
                 }
 
             }
-            catch(SqlException) { return null;}
+            catch (SqlException) { return null; }
 
             return transfers;
         }
 
-<<<<<<< HEAD
-        public Transfer ExecuteTransfer();//actually add/remove money from two accounts.  
-=======
-        public Transfer ExecuteTransfer() {
-            //TODO fill this out 
-            return null;
+
+        public bool ExecuteTransfer(Transfer transfer)//actually add/remove money from two accounts.  
+        {
+           
+            try
+            {
+                using(SqlConnection conn = new SqlConnection())
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(@"Begin Transaction; 
+                                                    UPDATE account SET balance = balance-(@amount)
+                                                    WHERE account_id = (SELECT account_from FROM transfer WHERE account_id = @account_from);
+                    
+                                                    UPDATE account SET balance = balance+(@amount)
+                                                    WHERE account_id = (SELECT account_to FROM transfer where account_id = @account_to);
+
+                                                    COMMIT;", conn);
+
+                    cmd.Parameters.AddWithValue("@amount",transfer.Amount);
+                    cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
+                    cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
+
+                    cmd.ExecuteNonQuery();
+
+                    return true;
+                }
+            }
+            catch (SqlException ) { throw; }
+
+
+       
         }
->>>>>>> 29cc4b0bae576b4e4bae33220005afbc45bfaefd
+
+       
 
 
 
