@@ -10,18 +10,21 @@ namespace TenmoServer.Controllers
     public class TransferController : Controller
     {
 
-        private ITransferDao transferDao; 
+        private ITransferDao transferDao;
 
         public TransferController(ITransferDao transferDao)
         {
-            this.transferDao = transferDao; 
+            this.transferDao = transferDao;
 
         }
         //need HttpGet(ID), HttpPost to transfer to other user, HttpPut(TransactionID) to update both account
 
 
+
+        //[Authorize(Roles = "user")]
+        //[HttpPost] //create new transfer 
+
+
+
     }
-
 }
-
-
