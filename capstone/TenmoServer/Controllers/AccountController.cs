@@ -20,11 +20,11 @@ namespace TenmoServer.Controllers
         }
 
         /*[Authorize(Roles = "user")]*/ // we want to authorize this to only showing balance for userId when user IDs match. not sure if "user" is correct
-        [HttpGet("{id}")]
-        public ActionResult<Account> GetAccount(int id)
+        [HttpGet("{accountId}")]
+        public ActionResult<Account> GetAccountByAccountId(int accountId)
         {
             Account account = null;
-            account = accountDao.GetAccountByAccountId(id);
+            account = accountDao.GetAccountByAccountId(accountId);
 
             if (account != null)
             {
@@ -34,6 +34,37 @@ namespace TenmoServer.Controllers
             {
                 return NotFound();
             }
+        }
+        [HttpGet("user/{userId}")]
+        public ActionResult<Account> GetAccountByUserId(int userId)
+        {
+            Account account = null;
+           
+            account = accountDao.GetAccountByUserId(userId);
+
+            if (account != null)
+            {
+                return account;
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        [HttpGet("/account/{accountId}/balance")]
+        public ActionResult<decimal> GetAccountBalance(int accountId)
+        {
+            Account account = null; 
+            account = GetAccountByAccountId(accountId).Value;
+
+            if(account != null)
+            {
+                return account.Balance;
+            } else
+            {
+               return NotFound();
+            }           
+               
         }
     }
 }
