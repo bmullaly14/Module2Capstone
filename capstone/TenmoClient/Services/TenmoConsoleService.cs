@@ -52,15 +52,6 @@ namespace TenmoClient.Services
         }
 
         // Add application-specific UI methods here...
-<<<<<<< HEAD
 
-         
-
-
-=======
-        //public LoginUser 
-        //{
-        //}
->>>>>>> 29cc4b0bae576b4e4bae33220005afbc45bfaefd
     }
 }
