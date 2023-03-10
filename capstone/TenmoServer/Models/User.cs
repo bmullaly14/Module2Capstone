@@ -18,7 +18,7 @@ namespace TenmoServer.Models
     {
         public int UserId { get; set; }
         public string Username { get; set; }
-        //public string Role { get; set; }
+        public string Role { get; set; } = "user";
         public string Token { get; set; }
     }
 
@@ -33,4 +33,5 @@ namespace TenmoServer.Models
         //[Required(ErrorMessage = "The 'Password' field must not be blank.")]
         public string Password { get; set; } = "";
     }
+       
 }
