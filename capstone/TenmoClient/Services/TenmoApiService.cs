@@ -20,6 +20,20 @@ namespace TenmoClient.Services
             CheckForError(response);
 
             return true;
-        } 
+        }
+
+        
+        
+        public decimal GetBalance(int userId)
+        {
+            
+            RestRequest request = new RestRequest($"user/{userId}/balance");
+            IRestResponse<decimal> response = client.Get<decimal>(request);
+
+            CheckForError(response);
+            
+            return response.Data;
+        }
+        
     }
 }

@@ -67,6 +67,8 @@ namespace TenmoClient.Services
             return response.Data;
         }
 
+        
+
         public void Logout()
         {
             user = new ApiUser();

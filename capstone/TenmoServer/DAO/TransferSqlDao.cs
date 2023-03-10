@@ -54,7 +54,7 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT * FFROM transfer WHERE transfer_id = @transfer_id", conn);
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfer WHERE transfer_id = @transfer_id", conn);
 
                     cmd.Parameters.AddWithValue("@transfer_id", transferId);
 
