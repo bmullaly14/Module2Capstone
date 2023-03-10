@@ -47,14 +47,14 @@ namespace TenmoServer.DAO
 
         public Transfer GetTransfer(int transferId)//Gets single transfer given transfer id from sql database
         {
-            Transfer transfer = null;
+            Transfer returnTransfer = new Transfer();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT * FFROM transfer WHERE transfer_id = @transfer_id", conn);
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfer WHERE transfer_id = @transfer_id", conn);
 
                     cmd.Parameters.AddWithValue("@transfer_id", transferId);
 
@@ -62,14 +62,14 @@ namespace TenmoServer.DAO
 
                     if (reader.Read())
                     {
-                        transfer = CreateTransferFromReader(reader);
+                        returnTransfer = CreateTransferFromReader(reader);
                     }
                 }
-                return transfer;
+                return returnTransfer;
             }
             catch (SqlException)
             {
-                return transfer;//would return empty transfer object
+                return returnTransfer;//would return empty transfer object
             }
 
             
@@ -111,21 +111,22 @@ namespace TenmoServer.DAO
            
             try
             {
-                using(SqlConnection conn = new SqlConnection())
+                using(SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(@"Begin Transaction; 
                                                     UPDATE account SET balance = balance-(@amount)
-                                                    WHERE account_id = (SELECT account_from FROM transfer WHERE account_id = @account_from);
+                                                    WHERE account_id = (SELECT account_from FROM transfer WHERE transfer_id = @id);
                     
                                                     UPDATE account SET balance = balance+(@amount)
-                                                    WHERE account_id = (SELECT account_to FROM transfer where account_id = @account_to);
+                                                    WHERE account_id = (SELECT account_to FROM transfer where transfer_id = @id);
 
                                                     COMMIT;", conn);
 
                     cmd.Parameters.AddWithValue("@amount",transfer.Amount);
-                    cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
-                    cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
+                    cmd.Parameters.AddWithValue("@id", transfer.TransferId);
+                    //cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
+                    //cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
 
                     cmd.ExecuteNonQuery();
 
@@ -147,7 +148,7 @@ namespace TenmoServer.DAO
         {
             Transfer transfer = new Transfer();
             transfer.TransferId = Convert.ToInt32(reader["transfer_id"]);
-            transfer.TransferTypeId = Convert.ToInt32(reader["trasnfer_type_id"]);
+            transfer.TransferTypeId = Convert.ToInt32(reader["transfer_type_id"]);
             transfer.TransferStatusId = Convert.ToInt32(reader["transfer_status_id"]);
             transfer.AccountFrom = Convert.ToInt32(reader["account_from"]);
             transfer.AccountTo = Convert.ToInt32(reader["account_to"]);
