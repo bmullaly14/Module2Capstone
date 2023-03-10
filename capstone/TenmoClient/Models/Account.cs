@@ -1,6 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
-namespace TenmoServer.Models
+namespace TenmoClient.Models
 {
     public class Account
     {
@@ -8,7 +11,7 @@ namespace TenmoServer.Models
         public int AccountId { get; set; }
         public int UserId { get; set; }
 
-        [Range(0.01, double.PositiveInfinity, ErrorMessage = "The field `Balance` must be greater than 0.")] 
+        [Range(0.01, double.PositiveInfinity, ErrorMessage = "The field `Balance` must be greater than 0.")]
         public decimal Balance { get; set; } 
 
         //CONSTRUCTORS
@@ -19,3 +22,5 @@ namespace TenmoServer.Models
         }
     }
 }
+}
+

@@ -53,5 +53,17 @@ namespace TenmoClient.Services
 
         // Add application-specific UI methods here...
 
+        public void PrintBalance(Account account)
+        {
+            Console.WriteLine("");
+            Console.WriteLine($"Your current balance is {account.Balance}");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("1: Main Menu");
+            Console.WriteLine("2: Logout"); 
+            Console.WriteLine("3: Exit");
+            Console.WriteLine("---------");
+        }
+
     }
 }
