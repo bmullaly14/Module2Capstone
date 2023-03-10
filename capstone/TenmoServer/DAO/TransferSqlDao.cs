@@ -84,9 +84,9 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id FROM transfer  
-                                                    JOIN account ON account.account_id = transfer.account_from 
-                                                    WHERE @user_id = transfer.account_from OR @user_id= transfer.account_to;", conn);//I dont know if this makes sense???
+                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id FROM transfer                      
+                                                    WHERE (SELECT account_id FROM account WHERE user_id = @user_id) = account_from 
+                                                    OR (SELECT account_id FROM account WHERE user_id = @user_id) = account_to;", conn);//I dont know if this makes sense???
 
                     cmd.Parameters.AddWithValue("@user_id", userId);
 
