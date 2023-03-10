@@ -71,13 +71,15 @@ namespace TenmoServer.Controllers
         {
             Transfer newTransfer = transferDao.CreateTransfer(transfer);
 
-            return Created($"/transfer/{newTransfer.TransferId}", newTransfer);
+            return ExecuteSendTransfer(newTransfer);
+                //(Created($"/transfer/{newTransfer.TransferId}", newTransfer));
         }
 
         [HttpPut]
-        public ActionResult<Transfer> ExecuteSendTransfer(Transfer transfer) // take in a transfer FROM create transfer in DAO
+        
+        public ActionResult<Transfer> ExecuteSendTransfer([FromBody] Transfer transfer) // take in a transfer FROM create transfer in DAO
         {            
-            //Transfer newTransfer = (Transfer)CreateTransfer(transfer).Value;
+            //Transfer newTransfer = CreateTransfer(transfer.Value);
 
             if(transfer.TransferId == 0)
             {
