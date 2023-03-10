@@ -68,21 +68,46 @@ namespace TenmoServer.Controllers
 
             }
         }
+<<<<<<< HEAD
+
+        [HttpGet("user/{userId}/balance")]
+        public ActionResult<decimal> GetAccountBalanceByUserId(int userId)
+        {
+            Account account = null;
+
+            account = accountDao.GetAccountByUserId(userId);
+
+            if (account != null)
+            {
+                return account.Balance;
+            }
+            else
+            {
+                return NotFound();
+
+
+
+            }
+        }
+        [Authorize(Roles = "admin, user")]
+=======
         //[Authorize(Roles = "admin, user")]
+>>>>>>> 35ee5a35424ee5eab6fa514e35fc3f88e8d2e040
         [HttpGet("/account/{accountId}/balance")]
         public ActionResult<decimal> GetAccountBalance(int accountId)
         {
-            Account account = null; 
+            Account account = null;
             account = GetAccountByAccountId(accountId).Value;
 
-            if(account != null)
+            if (account != null)
             {
                 return account.Balance;
-            } else
+            }
+            else
             {
-               return NotFound();
-            }           
-               
+                return NotFound();
+            }
+
         }
     }
 }

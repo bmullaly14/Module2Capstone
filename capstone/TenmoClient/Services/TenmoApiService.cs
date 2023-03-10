@@ -37,7 +37,25 @@ namespace TenmoClient.Services
             CheckForError(response);
 
             return true;
+<<<<<<< HEAD
+        }
+
+        
+        
+        public decimal GetBalance(int userId)
+        {
+            
+            RestRequest request = new RestRequest($"user/{userId}/balance");
+            IRestResponse<decimal> response = client.Get<decimal>(request);
+
+            CheckForError(response);
+            
+            return response.Data;
+        }
+        
+=======
         } 
 >>>>>>> 35ee5a35424ee5eab6fa514e35fc3f88e8d2e040
+>>>>>>> 2439720368ee2d0a2e6119e398a7dcf169cbf753
     }
 }

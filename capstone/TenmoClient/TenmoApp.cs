@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using TenmoClient.Models;
 using TenmoClient.Services;
 
@@ -73,7 +74,12 @@ namespace TenmoClient
 
             if (menuSelection == 1)
             {
+<<<<<<< HEAD
+               
+                // View your current balance
+=======
                 //ShowBalance(); 
+>>>>>>> 2439720368ee2d0a2e6119e398a7dcf169cbf753
             }
 
             if (menuSelection == 2)
@@ -108,7 +114,13 @@ namespace TenmoClient
 
             return true;    // Keep the main menu loop going
         }
-
+        //public void RetrieveBalance()
+        //{
+            
+            
+        //    decimal balance = tenmoApiService.GetBalance(tenmoApiService.UserId);
+        //    Console.WriteLine(balance);
+        //}
         private void Login()
         {
             LoginUser loginUser = console.PromptForLogin();
