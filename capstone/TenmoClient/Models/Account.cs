@@ -22,5 +22,5 @@ namespace TenmoClient.Models
         }
     }
 }
-}
+
 
