@@ -73,7 +73,7 @@ namespace TenmoClient
 
             if (menuSelection == 1)
             {
-                //ShowBalance(); 
+                ShowBalance();
             }
 
             if (menuSelection == 2)
@@ -85,6 +85,7 @@ namespace TenmoClient
             if (menuSelection == 3)
             {
                 // View your pending requests
+                //ShowPendingRequests(); optional 
             }
 
             if (menuSelection == 4)
@@ -95,7 +96,7 @@ namespace TenmoClient
 
             if (menuSelection == 5)
             {
-                //RequestTEBucks(); 
+                //RequestTEBucks(); optional 
                 // Request TE bucks
             }
 
@@ -161,65 +162,66 @@ namespace TenmoClient
             }
             console.Pause();
         }
-    }
-}
 
-        //private void ShowBalance()
-        //{
-        //    try
-        //    {
-        //        Account account = tenmoApiService.GetAccount(int accountId);  
-        //        if (account != null)
-        //        {
-        //            console.PrintBalance(account);  
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        console.PrintError(ex.Message);
-        //    }
-        //    console.Pause(); 
-        //}
 
+
+        private void ShowBalance()
+        {
+            try
+            {
+                int accountId = console.PromptForInteger("Please enter an account number", 0);
+                Account account = tenmoApiService.GetAccount(accountId);
+                if (account != null)
+                {
+                    console.PrintBalance(account);
+                }
+            }
+            catch (Exception ex)
+            {
+                console.PrintError(ex.Message);
+            }
+            console.Pause();
+        }
 
 
         //private void ShowTransfers()
         //{
         //    try
         //    {
-                //int accountId = console.PromptForInteger("Please enter an account number", 0);
-                //if (accountId == 0)
-                //{
-                //    return;
-                //}
-            //    Account account = tenmoApiService.GetTransferHistory();
-            //    console.PrintSuccess($" Your account {account} balance is ");
+        //        int accountId = console.PromptForInteger("Please enter an account number", 0);
+        //        if (accountId == 0)
+        //        {
+        //            return;
+        //        }
+        //        Account account = tenmoApiService.GetTransferHistory();
+        //        console.PrintSuccess($" Your account {account} balance is ");
 
-            //}
-            //catch (Exception ex)
-            //{
-            //    console.PrintError(ex.Message);
-            //}
-            //console.Pause();
-//        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        console.PrintError(ex.Message);
+        //    }
+        //    console.Pause();
+        //}
 
-//        private void SendTEBucks()
-//        {
-//            try
-//            {
-//                int accountID = console.PromptForInteger("Please enter the account number you would like to send $ to."); 
-//                if(accountID == 0)
-//                {
-//                    return;
-//                }
-//                Account account = tenmoApiService.GetAccount(accountID);
-//                Console.PrintSuccess();
-//            }
-//            catch (Exception ex)
-//            {
-//                console.PrintError(ex.Message);
-//            }
-//            console.Pause();
-//        }
-//    }
-//}
+        //private void SendTEBucks()
+        //{
+        //    try
+        //    {
+        //        int accountID = console.PromptForInteger("Please enter the account number you would like to send $ to.");
+        //        if (accountID == 0)
+        //        {
+        //            return;
+        //        }
+        //        Account account = tenmoApiService.GetAccount(accountID);
+        //        Console.PrintSuccess();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        console.PrintError(ex.Message);
+        //    }
+        //    console.Pause();
+
+        //}
+    }
+}
