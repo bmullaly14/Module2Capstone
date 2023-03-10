@@ -89,7 +89,8 @@ namespace TenmoServer.Controllers
             if (!result)
             {
                 return StatusCode(500);
-            } else
+            }
+            else
             {
                 return transfer;
             }
@@ -114,10 +115,11 @@ namespace TenmoServer.Controllers
             } else { return false; }
         }
     }
+}
 
         //[Authorize(Roles = "user")]
         //[HttpPost] //create new transfer 
 
+}
 
-
-    }
+    
