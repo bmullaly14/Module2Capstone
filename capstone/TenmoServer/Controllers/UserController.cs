@@ -34,7 +34,7 @@ namespace TenmoServer.Controllers
             }
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("/user/id/{userId}")]
         public ActionResult<User> GetUserById(int userId)
         {
             User returnUser = null;
@@ -50,7 +50,7 @@ namespace TenmoServer.Controllers
             }
         }
 
-        [HttpGet("{username}")]
+        [HttpGet("/user/name/{username}")]
         public ActionResult<User> GetUserByName(string username)
         {
             User returnUser = null;
@@ -66,11 +66,11 @@ namespace TenmoServer.Controllers
             }
         }
 
-        [HttpPost()]
-        public ActionResult<User> AddUser(string username, string password)
+        [HttpPost("register")]
+        public ActionResult<User> AddUser(LoginUser userParam)
         {
-            User newUser = null;
-            newUser = userDao.AddUser(username, password);
+            User newUser = new User();
+            newUser = userDao.AddUser(userParam.Username, userParam.Password);
 
             if (newUser == null)
             {
