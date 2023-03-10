@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TenmoServer.DAO;
 using TenmoServer.Models;
@@ -8,7 +9,8 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class AccountController : Controller
+    [Authorize]
+    public class AccountController : ControllerBase
     {
         private IUserDao userDao;
         private IAccountDao accountDao;
@@ -19,21 +21,33 @@ namespace TenmoServer.Controllers
             this.accountDao = accountDao;
         }
 
-        [Authorize(Roles = "admin, user")] // we want to authorize this to only showing balance for userId when user IDs match. not sure if "user" is correct
+         // we want to authorize this to only showing balance for userId when user IDs match. not sure if "user" is correct
         [HttpGet("{accountId}")]
         public ActionResult<Account> GetAccountByAccountId(int accountId)
         {
-            Account account = null;
-            account = accountDao.GetAccountByAccountId(accountId);
+            
 
-            if (account != null)
+            string userName = User.Identity.Name;
+
+            User user = userDao.GetUserByName(userName);
+            Account userAccount = accountDao.GetAccountByUserId(user.UserId);
+
+            if(userAccount.AccountId == accountId)
             {
-                return account;
-            }
-            else
-            {
-                return NotFound();
-            }
+                Account account = null;
+                account = accountDao.GetAccountByAccountId(accountId);
+                if (userAccount != null)
+                {
+                    return account;
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+            } else { return Unauthorized(); }
+
+           
         }
         [HttpGet("user/{userId}")]
         public ActionResult<Account> GetAccountByUserId(int userId)
@@ -54,7 +68,7 @@ namespace TenmoServer.Controllers
 
             }
         }
-        [Authorize(Roles = "admin, user")]
+        //[Authorize(Roles = "admin, user")]
         [HttpGet("/account/{accountId}/balance")]
         public ActionResult<decimal> GetAccountBalance(int accountId)
         {

@@ -46,7 +46,7 @@ namespace TenmoClient.Services
         //login endpoints
         public bool Register(LoginUser registerUser)
         {
-            RestRequest request = new RestRequest("login/register");
+            RestRequest request = new RestRequest("/login/register");
             request.AddJsonBody(registerUser);
             IRestResponse<ApiUser> response = client.Post<ApiUser>(request);
 

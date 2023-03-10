@@ -48,6 +48,8 @@ namespace TenmoClient.Services
                 Username = username,
                 Password = password
             };
+            username = "";
+            password = "";
             return loginUser;
         }
 

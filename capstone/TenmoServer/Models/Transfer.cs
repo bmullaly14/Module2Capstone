@@ -21,7 +21,7 @@ namespace TenmoServer.Models
         [Range(0.01, double.PositiveInfinity, ErrorMessage = "The field `Amount` must be greater than 0.")]
         public decimal Amount { get; set;}
 
-
+        public Transfer() { }
         
     }
 }
