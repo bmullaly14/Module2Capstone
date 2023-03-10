@@ -47,7 +47,7 @@ namespace TenmoServer.DAO
 
         public Transfer GetTransfer(int transferId)//Gets single transfer given transfer id from sql database
         {
-            Transfer transfer = null;
+            Transfer returnTransfer = new Transfer();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -62,14 +62,14 @@ namespace TenmoServer.DAO
 
                     if (reader.Read())
                     {
-                        transfer = CreateTransferFromReader(reader);
+                        returnTransfer = CreateTransferFromReader(reader);
                     }
                 }
-                return transfer;
+                return returnTransfer;
             }
             catch (SqlException)
             {
-                return transfer;//would return empty transfer object
+                return returnTransfer;//would return empty transfer object
             }
 
             
@@ -116,16 +116,17 @@ namespace TenmoServer.DAO
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(@"Begin Transaction; 
                                                     UPDATE account SET balance = balance-(@amount)
-                                                    WHERE account_id = (SELECT account_from FROM transfer WHERE account_id = @account_from);
+                                                    WHERE account_id = (SELECT account_from FROM transfer WHERE transfer_id = @id);
                     
                                                     UPDATE account SET balance = balance+(@amount)
-                                                    WHERE account_id = (SELECT account_to FROM transfer where account_id = @account_to);
+                                                    WHERE account_id = (SELECT account_to FROM transfer where transfer_id = @id);
 
                                                     COMMIT;", conn);
 
                     cmd.Parameters.AddWithValue("@amount",transfer.Amount);
-                    cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
-                    cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
+                    cmd.Parameters.AddWithValue("@id", transfer.TransferId);
+                    //cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
+                    //cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
 
                     cmd.ExecuteNonQuery();
 
