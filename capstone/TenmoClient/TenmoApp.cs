@@ -74,12 +74,7 @@ namespace TenmoClient
 
             if (menuSelection == 1)
             {
-<<<<<<< HEAD
-               
-                // View your current balance
-=======
-                //ShowBalance(); 
->>>>>>> 2439720368ee2d0a2e6119e398a7dcf169cbf753
+
             }
 
             if (menuSelection == 2)

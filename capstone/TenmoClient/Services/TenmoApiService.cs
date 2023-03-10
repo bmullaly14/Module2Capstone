@@ -11,13 +11,15 @@ namespace TenmoClient.Services
         public TenmoApiService(string apiUrl) : base(apiUrl) { }
 
         // Add methods to call api here...
-        public bool Register(LoginUser registerUser) 
+        public bool Register(LoginUser registerUser)
         {
             RestRequest request = new RestRequest("/login/register");
             request.AddJsonBody(registerUser);
             IRestResponse<ApiUser> response = client.Post<ApiUser>(request);
+            return true;
+        }
 
-<<<<<<< HEAD
+
         public Account GetTransferHistory(int accountId)
         {
             RestRequest request = new RestRequest($"account/{accountId}");
@@ -33,29 +35,6 @@ namespace TenmoClient.Services
             CheckForError(response);
             return response.Data; 
         }
-=======
-            CheckForError(response);
 
-            return true;
-<<<<<<< HEAD
-        }
-
-        
-        
-        public decimal GetBalance(int userId)
-        {
-            
-            RestRequest request = new RestRequest($"user/{userId}/balance");
-            IRestResponse<decimal> response = client.Get<decimal>(request);
-
-            CheckForError(response);
-            
-            return response.Data;
-        }
-        
-=======
-        } 
->>>>>>> 35ee5a35424ee5eab6fa514e35fc3f88e8d2e040
->>>>>>> 2439720368ee2d0a2e6119e398a7dcf169cbf753
     }
 }

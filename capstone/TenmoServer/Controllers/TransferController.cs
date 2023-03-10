@@ -70,7 +70,7 @@ namespace TenmoServer.Controllers
         public ActionResult<Transfer> CreateTransfer(Transfer transfer)
         {
             Transfer newTransfer = transferDao.CreateTransfer(transfer);
-
+            
             return Created($"/transfer/{newTransfer.TransferId}", newTransfer);
         }
 
@@ -120,6 +120,5 @@ namespace TenmoServer.Controllers
         //[Authorize(Roles = "user")]
         //[HttpPost] //create new transfer 
 
-}
 
     
