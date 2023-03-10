@@ -31,8 +31,9 @@ namespace TenmoServer.DAO
                     {
                         account = CreateAccountFromReader(reader);
                     }
+                    return account;
                 }
-                return account;
+                
             }
             catch(SqlException ex)
             {
