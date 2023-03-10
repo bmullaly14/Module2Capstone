@@ -52,7 +52,7 @@ namespace TenmoServer.Controllers
             } else { return transfer; }
         }
         //Create Transfer will be HttpPost, take in Transfer, put out Transfer w/ ID from SQL DB
-        [HttpPost]
+       [HttpPost]
         public ActionResult<Transfer> CreateTransfer(Transfer transfer)
         {
             Transfer newTransfer = transferDao.CreateTransfer(transfer);

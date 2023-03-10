@@ -111,7 +111,7 @@ namespace TenmoServer.DAO
            
             try
             {
-                using(SqlConnection conn = new SqlConnection())
+                using(SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(@"Begin Transaction; 

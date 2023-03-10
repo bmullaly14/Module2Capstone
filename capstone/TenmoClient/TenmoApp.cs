@@ -74,7 +74,7 @@ namespace TenmoClient
 
             if (menuSelection == 1)
             {
-                RetrieveBalance();
+               
                 // View your current balance
             }
 
@@ -107,13 +107,13 @@ namespace TenmoClient
 
             return true;    // Keep the main menu loop going
         }
-        public void RetrieveBalance()
-        {
+        //public void RetrieveBalance()
+        //{
             
             
-            decimal balance = tenmoApiService.GetBalance(tenmoApiService.UserId);
-                Console.WriteLine(balance);
-        }
+        //    decimal balance = tenmoApiService.GetBalance(tenmoApiService.UserId);
+        //    Console.WriteLine(balance);
+        //}
         private void Login()
         {
             LoginUser loginUser = console.PromptForLogin();
