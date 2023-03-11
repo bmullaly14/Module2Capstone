@@ -39,7 +39,7 @@ namespace TenmoServer.Controllers
 
                 transfers = (List<Transfer>)transferDao.GetTransfersByUserId(userId);
 
-                if (transfers == null)
+                if (transfers.Count == 0)
                 {
                     return NoContent();
                 }
@@ -57,15 +57,20 @@ namespace TenmoServer.Controllers
 
             transfer = transferDao.GetTransfer(transferId);
 
-            if (CheckSendOrRequest(transfer))
-            {
 
-                if (transfer == null)
+
+            if (CheckAuthForTransfer(transfer))
+            {                
+               return transfer;
+            } 
+            else 
+            {
+                if (transfer.TransferId == 0)
                 {
                     return NotFound();
-                }
-                else { return transfer; }
-            } else { return Unauthorized(); }
+                } 
+                return Unauthorized(); 
+            }
         }
         //Create Transfer will be HttpPost, take in Transfer, put out Transfer w/ ID from SQL DB
        [HttpPost]
@@ -98,8 +103,8 @@ namespace TenmoServer.Controllers
                 //(Created($"/transfer/{newTransfer.TransferId}", newTransfer));
         }
 
+
         [HttpPut]
-        
         public ActionResult<Transfer> ExecuteSendTransfer([FromBody] Transfer transfer) // take in a transfer FROM create transfer in DAO
         {            
             //Transfer newTransfer = CreateTransfer(transfer.Value);
