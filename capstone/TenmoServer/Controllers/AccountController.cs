@@ -104,7 +104,7 @@ namespace TenmoServer.Controllers
 
             }
         }
-        [Authorize(Roles = "admin, user")]
+        //[Authorize(Roles = "admin, user")]
 
         [HttpGet("/account/{accountId}/balance")]
         public ActionResult<decimal> GetAccountBalance(int accountId)
