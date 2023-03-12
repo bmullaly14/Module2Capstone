@@ -158,14 +158,13 @@ namespace TenmoServer.DAO
                                                     WHERE account_id = (SELECT account_from FROM transfer WHERE transfer_id = @id);
                     
                                                     UPDATE account SET balance = balance+(@amount)
-                                                    WHERE account_id = (SELECT account_to FROM transfer where transfer_id = @id);
+                                                    WHERE account_id = (SELECT account_to FROM transfer WHERE transfer_id = @id);
 
                                                     COMMIT;", conn);
 
                     cmd.Parameters.AddWithValue("@amount",transfer.Amount);
                     cmd.Parameters.AddWithValue("@id", transfer.TransferId);
-                    //cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
-                    //cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
+                 
 
                     cmd.ExecuteNonQuery();
 
