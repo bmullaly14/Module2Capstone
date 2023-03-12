@@ -67,5 +67,18 @@ namespace TenmoClient.Services
             Console.WriteLine("---------");
         }
 
+        public void PrintTransfers(Transfer transfer, string accountTo, string accountFrom) 
+        {
+       
+                Console.WriteLine($"  Transfer Id: {transfer.TransferId}  |  Account From: {accountFrom}  |  Account To: {accountTo}  |  Amount: {transfer.Amount}");
+        }
+
+        public void PrintUsers( ApiUser user) 
+        {
+            
+            Console.WriteLine($"{user.UserId} : { user.Username}");
+        }
+
+
     }
 }

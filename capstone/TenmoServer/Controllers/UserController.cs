@@ -50,6 +50,25 @@ namespace TenmoServer.Controllers
             }
         }
 
+        [HttpGet("/user/account/{accountId}")]
+
+        public ActionResult<User> GetUserByAccountId(int accountId)
+        {
+            User returnUser = null;
+            returnUser = userDao.GetUserByAccountId(accountId);
+
+            if (returnUser == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(returnUser);
+            }
+        }
+
+
+
         [HttpGet("/user/name/{username}")]
         public ActionResult<User> GetUserByName(string username)
         {
