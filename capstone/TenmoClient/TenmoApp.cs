@@ -80,7 +80,7 @@ namespace TenmoClient
                 // View your current balance
 
                 //ShowBalance(); 
->>>>>>> 6e58f904d5a2c92ca7d0754ff22e2317bd2ae16c
+
 
             }
 

@@ -16,8 +16,8 @@ namespace TenmoClient.Services
             RestRequest request = new RestRequest("/login/register");
             request.AddJsonBody(registerUser);
             IRestResponse<ApiUser> response = client.Post<ApiUser>(request);
-            return true;
-        }
+           
+
 
             CheckForError(response);
 
@@ -51,25 +51,25 @@ namespace TenmoClient.Services
             return response.Data;
 
 
-            return true;
+
 
         }
 
-        
-        
-        public decimal GetBalance(int userId)
+
+
+        public decimal GetBalanceByUserId(int userId)
         {
-            
+
             RestRequest request = new RestRequest($"user/{userId}/balance");
             IRestResponse<decimal> response = client.Get<decimal>(request);
 
             CheckForError(response);
-            
+
             return response.Data;
         }
-        
 
-        } 
+    }
+}
 
  
 
