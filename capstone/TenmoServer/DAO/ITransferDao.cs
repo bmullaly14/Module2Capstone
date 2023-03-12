@@ -9,7 +9,9 @@ namespace TenmoServer.DAO
         Transfer CreateTransfer(Transfer transfer);
 
         IList<Transfer> GetTransfersByUserId(int userId);
+        IList<Transfer> GetPendingTransfersByUserId(int userId);
 
+        bool UpdatePendingTransfer(Transfer transfer);
         Transfer GetTransfer(int transferId);
 
         bool ExecuteTransfer(Transfer transfer);

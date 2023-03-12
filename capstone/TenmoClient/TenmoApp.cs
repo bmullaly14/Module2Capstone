@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using System.Security.Claims;
 using TenmoClient.Models;
 using TenmoClient.Services;
@@ -10,6 +11,7 @@ namespace TenmoClient
     {
         private readonly TenmoConsoleService console = new TenmoConsoleService();
         private readonly TenmoApiService tenmoApiService;
+        private ApiUser User;
 
         public TenmoApp(string apiUrl)
         {
@@ -79,7 +81,7 @@ namespace TenmoClient
                
                 // View your current balance
 
-                //ShowBalance(); 
+                ShowBalance(); 
 
 
             }
@@ -141,6 +143,7 @@ namespace TenmoClient
                 }
                 else
                 {
+                    this.User = user;
                     console.PrintSuccess("You are now logged in");
                 }
             }
@@ -183,8 +186,8 @@ namespace TenmoClient
         {
             try
             {
-                int accountId = console.PromptForInteger("Please enter an account number", 0);
-                Account account = tenmoApiService.GetAccount(accountId);
+                Account account= tenmoApiService.GetAccountByUserId(User);
+                
                 if (account != null)
                 {
                     console.PrintBalance(account);
