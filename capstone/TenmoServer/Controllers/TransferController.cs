@@ -39,12 +39,12 @@ namespace TenmoServer.Controllers
 
                 transfers = (List<Transfer>)transferDao.GetTransfersByUserId(userId);
 
-                if (transfers == null)
+                if (transfers.Count == 0)
                 {
                     return NoContent();
                 }
                 else
-                {
+                {   
                     return transfers;
                 }
             } else { return Unauthorized(); }
@@ -57,18 +57,43 @@ namespace TenmoServer.Controllers
 
             transfer = transferDao.GetTransfer(transferId);
 
-            if (CheckSendOrRequest(transfer))
-            {
 
-                if (transfer == null)
+
+            if (CheckAuthForTransfer(transfer))
+            {                
+               return transfer;
+            } 
+            else 
+            {
+                if (transfer.TransferId == 0)
                 {
                     return NotFound();
-                }
-                else { return transfer; }
-            } else { return Unauthorized(); }
+                } 
+                return Unauthorized(); 
+            }
         }
         //Create Transfer will be HttpPost, take in Transfer, put out Transfer w/ ID from SQL DB
-       [HttpPost]
+        [HttpGet("/transfer/user/{userId}/pending")]
+        public ActionResult<IList<Transfer>> GetPendingTransfersByUserId(int userId)
+        {
+            if (CheckUser(userId))
+            {
+                List<Transfer> transfers = new List<Transfer>();
+
+                transfers = (List<Transfer>)transferDao.GetPendingTransfersByUserId(userId);
+
+                if (transfers.Count == 0)
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return transfers;
+                }
+            }
+            else { return Unauthorized(); }
+        }
+        [HttpPost]
         public ActionResult<Transfer> CreateTransfer(Transfer transfer)
         {
             if (CheckAuthForTransfer(transfer) && CheckValidTransferAmount(transfer))
@@ -99,7 +124,6 @@ namespace TenmoServer.Controllers
         }
 
         [HttpPut]
-        
         public ActionResult<Transfer> ExecuteSendTransfer([FromBody] Transfer transfer) // take in a transfer FROM create transfer in DAO
         {            
             //Transfer newTransfer = CreateTransfer(transfer.Value);
@@ -120,8 +144,39 @@ namespace TenmoServer.Controllers
                 return transfer;
             }
              
-        } 
-        public bool CheckUser(int userId)
+        }
+        [HttpPut("/transfer/{transferid}")]
+        public ActionResult<Transfer> ApproveOrRejectTransfer(int transferId, [FromForm] bool approved) //**Requires {"approved" : true/false} in JSON body
+        {
+            Transfer pending = transferDao.GetTransfer(transferId);
+            if (CheckAuthForApprove(pending) == false)
+            {
+                if (pending.TransferStatusId != 1)
+                {
+                    return BadRequest();
+                }
+                return Unauthorized();
+            }
+            if (CheckValidTransferAmount(pending) == false)
+            {
+                return BadRequest();
+            }
+            if (approved)
+            {
+                pending = ApproveTransfer(pending);
+                transferDao.UpdatePendingTransfer(pending);
+                return ExecuteSendTransfer(pending);
+            }
+            else
+            {
+                pending = RejectTransfer(pending);
+                transferDao.UpdatePendingTransfer(pending);
+                return pending;
+            }
+
+        }
+
+        public bool CheckUser(int userId) //checks if current user matches a given userID
         {
             string userName = User.Identity.Name;
 
@@ -132,7 +187,7 @@ namespace TenmoServer.Controllers
                 return true;
             } else { return false; }
         }
-        public bool CheckAuthForTransfer(Transfer transfer)
+        public bool CheckAuthForTransfer(Transfer transfer) //checks that user isn't sending to self, and that current user is involved in transfer
         {
             if (transfer.AccountTo == transfer.AccountFrom)
             {
@@ -144,7 +199,14 @@ namespace TenmoServer.Controllers
             }            
             return false;
         }
-        public bool CheckValidTransferAmount(Transfer transfer)
+        public bool CheckAuthForApprove(Transfer transfer)//make sure current user is "From", make sure status is pending, make sure not sending to self
+        {
+            if (CheckUser(transfer.AccountFrom) && transfer.TransferStatusId == 1 && CheckAuthForTransfer(transfer)) 
+            {
+                return true;
+            } else { return false; }
+        }
+        public bool CheckValidTransferAmount(Transfer transfer) //check that From account has balance >= transfer amount, check transfer amount not negative
         { 
             if (transfer.Amount > accountDao.GetAccountByAccountId(transfer.AccountFrom).Balance)
             {
@@ -156,7 +218,8 @@ namespace TenmoServer.Controllers
             }
             return true;
         }
-        public bool CheckSendOrRequest(Transfer transfer) { 
+        public bool CheckSendOrRequest(Transfer transfer) //Checks to see if transfer is a "Send" or a "Request"
+        { 
             if(CheckUser(accountDao.GetAccountByAccountId(transfer.AccountFrom).UserId)) 
             {
                 return true;
@@ -165,6 +228,16 @@ namespace TenmoServer.Controllers
                 return false;
             }
             return false;
+        }
+        public Transfer ApproveTransfer(Transfer transfer) //Assigns value of 2 to TransferStatusId of given transfer
+        {
+            transfer.TransferStatusId = 2;
+            return transfer;
+        }
+        public Transfer RejectTransfer(Transfer transfer) //Assigns value of 3 to TransferStatusId of given transfer
+        {
+            transfer.TransferStatusId = 3;
+            return transfer;
         }
     }
 }

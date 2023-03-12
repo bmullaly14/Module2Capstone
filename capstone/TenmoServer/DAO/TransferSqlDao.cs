@@ -84,7 +84,8 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand(@"SELECT * FROM transfer  
+
+                    SqlCommand cmd = new SqlCommand(@"SELECT * FROM transfer 
                                                     WHERE (SELECT account_id FROM account WHERE user_id = @user_id) = account_from 
                                                     OR (SELECT account_id FROM account WHERE user_id = @user_id) = account_to;", conn);//I dont know if this makes sense???
 
@@ -109,6 +110,39 @@ namespace TenmoServer.DAO
             
         }
 
+        public IList<Transfer> GetPendingTransfersByUserId(int userId)
+        {
+            IList<Transfer> transfers = new List<Transfer>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(@"SELECT * FROM transfer 
+                                                    WHERE (SELECT account_id FROM account WHERE user_id = @user_id AND transfer_status_id = 1) = account_from 
+                                                    OR (SELECT account_id FROM account WHERE user_id = @user_id AND transfer_status_id = 1) = account_to;", conn);//I dont know if this makes sense???
+
+                    cmd.Parameters.AddWithValue("@user_id", userId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Transfer transfer = CreateTransferFromReader(reader);
+                        transfers.Add(transfer);
+                    }
+                }
+                return transfers;
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return transfers;
+        }
 
         public bool ExecuteTransfer(Transfer transfer)//actually add/remove money from two accounts.  
         {
@@ -142,12 +176,27 @@ namespace TenmoServer.DAO
 
        
         }
+        public bool UpdatePendingTransfer(Transfer transfer)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(@"UPDATE transfer SET transfer_status_id = @status
+                                                    WHERE transfer_id = @id;", conn);
 
-       
+                    cmd.Parameters.AddWithValue("@status", transfer.TransferStatusId);
+                    cmd.Parameters.AddWithValue("@id", transfer.TransferId);
+                    
 
+                    cmd.ExecuteNonQuery();
 
-
-
+                    return true;
+                }
+            }
+            catch (SqlException) { throw; }
+        }       
         public Transfer CreateTransferFromReader(SqlDataReader reader)
         {
             Transfer transfer = new Transfer();
