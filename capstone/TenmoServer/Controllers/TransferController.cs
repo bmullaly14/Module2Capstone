@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using TenmoServer.DAO;
 using TenmoServer.Models;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 
 namespace TenmoServer.Controllers
 {
@@ -31,7 +33,7 @@ namespace TenmoServer.Controllers
         public ActionResult<IList<Transfer>> GetAllTransfersForUser(int userId)
         {
 
-            if (CheckUser(userId).Value)
+            if (CheckUser(userId))
             {
                 List<Transfer> transfers = new List<Transfer>();
 
@@ -55,7 +57,7 @@ namespace TenmoServer.Controllers
 
             transfer = transferDao.GetTransfer(transferId);
 
-            if (CheckAuthForTransfer(transfer).Value)
+            if (CheckSendOrRequest(transfer))
             {
 
                 if (transfer == null)
@@ -69,15 +71,38 @@ namespace TenmoServer.Controllers
        [HttpPost]
         public ActionResult<Transfer> CreateTransfer(Transfer transfer)
         {
-            Transfer newTransfer = transferDao.CreateTransfer(transfer);
+            if (CheckAuthForTransfer(transfer) && CheckValidTransferAmount(transfer))
+            {
+                if (CheckSendOrRequest(transfer))
+                {
+                    transfer.TransferTypeId = 2;
+                    transfer.TransferStatusId = 2;
+                    Transfer newTransfer = transferDao.CreateTransfer(transfer);
+
+                    return ExecuteSendTransfer(newTransfer);
+                }
+                else
+                {
+                    transfer.TransferTypeId = 1;
+                    transfer.TransferStatusId = 1;
+                    Transfer newTransfer = transferDao.CreateTransfer(transfer);
+                    return newTransfer;
+                }
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        
             
-            return Created($"/transfer/{newTransfer.TransferId}", newTransfer);
+                //(Created($"/transfer/{newTransfer.TransferId}", newTransfer));
         }
 
         [HttpPut]
-        public ActionResult<Transfer> ExecuteSendTransfer(Transfer transfer) // take in a transfer FROM create transfer in DAO
+        
+        public ActionResult<Transfer> ExecuteSendTransfer([FromBody] Transfer transfer) // take in a transfer FROM create transfer in DAO
         {            
-            //Transfer newTransfer = (Transfer)CreateTransfer(transfer).Value;
+            //Transfer newTransfer = CreateTransfer(transfer.Value);
 
             if(transfer.TransferId == 0)
             {
@@ -96,7 +121,7 @@ namespace TenmoServer.Controllers
             }
              
         } 
-        public ActionResult<bool> CheckUser(int userId)
+        public bool CheckUser(int userId)
         {
             string userName = User.Identity.Name;
 
@@ -107,12 +132,39 @@ namespace TenmoServer.Controllers
                 return true;
             } else { return false; }
         }
-        public ActionResult<bool> CheckAuthForTransfer(Transfer transfer)
+        public bool CheckAuthForTransfer(Transfer transfer)
         {
-            if(CheckUser(accountDao.GetAccountByAccountId(transfer.AccountFrom).UserId).Value || CheckUser(accountDao.GetAccountByAccountId(transfer.AccountTo).UserId).Value)
+            if (transfer.AccountTo == transfer.AccountFrom)
+            {
+                return false;
+            }
+            else if (CheckUser(accountDao.GetAccountByAccountId(transfer.AccountTo).UserId) || CheckUser(accountDao.GetAccountByAccountId(transfer.AccountFrom).UserId))
             {
                 return true;
-            } else { return false; }
+            }            
+            return false;
+        }
+        public bool CheckValidTransferAmount(Transfer transfer)
+        { 
+            if (transfer.Amount > accountDao.GetAccountByAccountId(transfer.AccountFrom).Balance)
+            {
+                return false;
+            }
+            else if (transfer.Amount <= 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        public bool CheckSendOrRequest(Transfer transfer) { 
+            if(CheckUser(accountDao.GetAccountByAccountId(transfer.AccountFrom).UserId)) 
+            {
+                return true;
+            } else if (CheckUser(accountDao.GetAccountByAccountId(transfer.AccountTo).UserId))
+            {
+                return false;
+            }
+            return false;
         }
     }
 }
