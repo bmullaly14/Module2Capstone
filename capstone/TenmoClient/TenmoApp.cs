@@ -76,16 +76,19 @@ namespace TenmoClient
 
             if (menuSelection == 1)
             {
+
+
                
                 // View your current balance
 
                 ShowBalance(); 
 
+
             }
 
             if (menuSelection == 2)
             {
-                //ShowTransfers();
+                ShowTransfers();
                 // View your past transfers
             }
 
@@ -97,7 +100,8 @@ namespace TenmoClient
 
             if (menuSelection == 4)
             {
-                //SendTEBucks();
+                
+                SendTEBucks();
                 // Send TE bucks
             }
 
@@ -198,44 +202,91 @@ namespace TenmoClient
         }
 
 
-        //private void ShowTransfers()
-        //{
-        //    try
-        //    {
-        //        int accountId = console.PromptForInteger("Please enter an account number", 0);
-        //        if (accountId == 0)
-        //        {
-        //            return;
-        //        }
-        //        Account account = tenmoApiService.GetTransferHistory();
-        //        console.PrintSuccess($" Your account {account} balance is ");
+        private void ShowTransfers()
+        {
+            try
+            {
+                int userId = User.UserId;
+               
+                List<Transfer> transfers = tenmoApiService.GetTransferHistory(User.UserId);
+                if (transfers != null)
+                {
+                    foreach (Transfer transfer in transfers)
+                    {
+                        string accountTo = tenmoApiService.GetUserByAccountId(transfer.AccountTo).Username;
+                        string accountFrom = tenmoApiService.GetUserByAccountId(transfer.AccountFrom).Username;
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        console.PrintError(ex.Message);
-        //    }
-        //    console.Pause();
-        //}
+                        console.PrintTransfers(transfer, accountTo, accountFrom);
+                    }
+                }
+                else { Console.WriteLine("You have no previous transfers!"); }
 
-        //private void SendTEBucks()
-        //{
-        //    try
-        //    {
-        //        int accountID = console.PromptForInteger("Please enter the account number you would like to send $ to.");
-        //        if (accountID == 0)
-        //        {
-        //            return;
-        //        }
-        //        Account account = tenmoApiService.GetAccount(accountID);
-        //        Console.PrintSuccess();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        console.PrintError(ex.Message);
-        //    }
-        //    console.Pause();
+            }
+            catch (Exception ex)
+            {
+                console.PrintError(ex.Message);
+            }
+            console.Pause();
+        }
 
-        //}
+        public int ShowUsers()
+        {
+            try
+            {
+                List<ApiUser> users = tenmoApiService.GetUsers();
+                Console.WriteLine("    Users     ");
+                
+                foreach (ApiUser user in users)
+                {
+                    
+                    if (user.Username != User.Username)
+                    {
+                        
+                        console.PrintUsers(user);
+                    }
+
+                    else { continue; }
+                }
+                
+            }
+            catch(Exception ex)//copied try catch format from other methods
+            {
+                console.PrintError(ex.Message);
+            }
+            return console.PromptForInteger("Choose a user by id number ");
+            
+        }
+
+        private void SendTEBucks()
+        {
+            int selecteduser = ShowUsers();
+            int amount = console.PromptForInteger(" Amount ");
+            try
+            {
+               if(User.UserId == selecteduser)
+                {
+                    Console.WriteLine("you can not send yourself money!");
+                }
+                else
+                {
+                    ApiUser selectedUser = tenmoApiService.GetUserByUserId(selecteduser);
+                    Transfer transfer = new Transfer();
+                    transfer.AccountFrom = tenmoApiService.GetAccountByUserId(User).AccountId;
+                    transfer.AccountTo = tenmoApiService.GetAccountByUserId(selectedUser).AccountId;
+                    transfer.Amount = amount/2;
+                    transfer.TransferStatusId = 2;
+                    transfer.TransferTypeId = 2;
+                    tenmoApiService.ExecuteTransfer(transfer);
+                }
+               
+              
+            }
+            catch (Exception ex)
+            {
+                console.PrintError(ex.Message);
+            }
+            console.Pause();
+
+        }
     }
 }
