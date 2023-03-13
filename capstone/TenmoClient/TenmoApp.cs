@@ -273,7 +273,7 @@ namespace TenmoClient
                     Transfer transfer = new Transfer();
                     transfer.AccountFrom = tenmoApiService.GetAccountByUserId(User).AccountId;
                     transfer.AccountTo = tenmoApiService.GetAccountByUserId(selectedUser).AccountId;
-                    transfer.Amount = amount/2;
+                    transfer.Amount = amount;
                     transfer.TransferStatusId = 2;
                     transfer.TransferTypeId = 2;
                     tenmoApiService.ExecuteTransfer(transfer);
