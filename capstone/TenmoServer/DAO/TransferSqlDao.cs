@@ -35,7 +35,7 @@ namespace TenmoServer.DAO
 
                     int newID = Convert.ToInt32(cmd.ExecuteScalar());
                     Transfer returnTransfer = GetTransfer(newID);
-                    ExecuteTransfer(returnTransfer);
+                    //ExecuteTransfer(returnTransfer);
 
                     return returnTransfer;
                 }
